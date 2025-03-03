@@ -132,3 +132,31 @@ output "queue_url" {
 output "queue_arn" {
   value = aws_sqs_queue.kind_cluster_queue.arn
 }
+
+
+## Permission to send message and receive message from SQS
+
+resource "aws_iam_policy" "sqs_policy" {
+  name        = "SQSSendMessagePolicy"
+  description = "Allows sending messages to all SQS queues"
+  policy      = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect   = "Allow"
+        Action   = [
+          "sqs:SendMessage",
+          "sqs:ReceiveMessage",
+          "sqs:DeleteMessage",         
+          "sqs:GetQueueAttributes" 
+        ]
+        Resource = "arn:aws:sqs:us-west-2:014337110715:*"
+      }
+    ]
+  })
+}
+
+resource "aws_iam_role_policy_attachment" "attach_sqs_policy" {
+  role       = "aws_iam_role.ec2_ssm_role.name"
+  policy_arn = aws_iam_policy.sqs_policy.arn
+}
