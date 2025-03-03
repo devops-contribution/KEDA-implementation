@@ -1,7 +1,7 @@
 import os
 import boto3
 import json
-import pymysql
+import mysql.connector
 
 # AWS SQS Configuration
 QUEUE_URL = os.getenv("SQS_QUEUE_URL")
@@ -19,23 +19,23 @@ sqs = boto3.client("sqs", region_name=AWS_REGION)
 
 # Function to connect to MySQL
 def get_db_connection():
-    return pymysql.connect(
+    return mysql.connector.connect(
         host=DB_HOST,
         port=DB_PORT,
         user=DB_USER,
         password=DB_PASSWORD,
-        database=DB_NAME,
-        cursorclass=pymysql.cursors.DictCursor
+        database=DB_NAME
     )
 
 # Function to insert message into MySQL
 def insert_into_db(message):
     try:
         connection = get_db_connection()
-        with connection.cursor() as cursor:
-            sql = "INSERT INTO messages (event, user_id, timestamp) VALUES (%s, %s, %s)"
-            cursor.execute(sql, (message["event"], message["user_id"], message["timestamp"]))
+        cursor = connection.cursor()
+        sql = "INSERT INTO messages (event, user_id, timestamp) VALUES (%s, %s, %s)"
+        cursor.execute(sql, (message["event"], message["user_id"], message["timestamp"]))
         connection.commit()
+        cursor.close()
         connection.close()
         print("Message inserted into MySQL.")
         return True
