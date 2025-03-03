@@ -34,7 +34,9 @@ spec:
                 sleep 5;
               done;
               echo 'MySQL is up. Creating table if not exists...';
-              mysql -h $MYSQL_HOST -u $MYSQL_USER -p$MYSQL_PASSWORD -D $MYSQL_DATABASE -e "
+              mysql -h $MYSQL_HOST -u $MYSQL_USER -p$MYSQL_PASSWORD -e "
+              CREATE DATABASE messages_db;
+              USE messages_db;
               CREATE TABLE IF NOT EXISTS messages (
                 id INT AUTO_INCREMENT PRIMARY KEY,
                 event VARCHAR(255) NOT NULL,
