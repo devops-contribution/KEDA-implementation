@@ -82,5 +82,5 @@ jobs:
           branch: "update-tag-br"
           base: "main"
           title: "Update image tag"
-          body: "Update image tag for reader and writer"
+          body: "Update image tag for consumer and publisher"
           labels: automated
