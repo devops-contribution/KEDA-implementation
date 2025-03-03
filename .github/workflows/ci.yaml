@@ -51,3 +51,36 @@ jobs:
           file: devops/consumer.Dockerfile
           push: true
           tags: "${{ secrets.DOCKER_USERNAME }}/consumer:${{ env.TAG }}"
+
+    
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Transform version for TAG
+        run: echo "TAG=$(echo '${{ needs.build.outputs.image_tag }}')" >> $GITHUB_ENV
+          
+      - name: Install yq
+        run: |
+          wget https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64 -O /usr/local/bin/yq
+          chmod +x /usr/local/bin/yq
+
+      - name: Update Version in File
+        run: |
+          export CONSUMER_IMAGE_TAG="docker.io/muk007/consumer:${TAG}"
+          export PUBLISHER_IMAGE_TAG="docker.io/muk007/publisher:${TAG}"
+          yq -i ".spec.template.spec.containers[0].image = \"${CONSUMER_IMAGE_TAG}\"" manifests/consumer.yaml
+          yq -i ".spec.template.spec.containers[0].image = \"${PUBLISHER_IMAGE_TAG}\"" manifests/publisher.yaml
+
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v5
+        with:
+          token: ${{ secrets.GH_PAT }}
+          branch: "update-tag-br"
+          base: "main"
+          title: "Update image tag"
+          body: "Update image tag for reader and writer"
+          labels: automated
