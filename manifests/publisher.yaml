@@ -1,18 +1,15 @@
 ---
-apiVersion: apps/v1
-kind: Deployment
+apiVersion: batch/v1
+kind: Job
 metadata:
-  name: publisher
+  name: publisher-job
 spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: publisher
   template:
     metadata:
       labels:
         app: publisher
     spec:
+      restartPolicy: Never
       containers:
         - name: publisher
           image: docker.io/muk007/publisher:9
