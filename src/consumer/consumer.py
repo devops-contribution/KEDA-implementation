@@ -4,9 +4,10 @@ import json
 
 # AWS SQS Configuration
 QUEUE_URL = os.getenv("SQS_QUEUE_URL")
+AWS_REGION = os.getenv("AWS_REGION", "us-west-2") # Defaults to us-west-2
 
 # Initialize SQS client
-sqs = boto3.client("sqs")
+sqs = boto3.client("sqs", region_name=AWS_REGION)
 
 def receive_messages():
     while True:
