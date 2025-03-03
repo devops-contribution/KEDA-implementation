@@ -16,21 +16,6 @@ spec:
       containers:
         - name: publisher
           image: docker.io/muk007/publisher
-          ports:
-            - containerPort: 5000
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: publisher-service
-  labels:
-    app: publisher
-spec:
-  selector:
-    app: publisher
-  ports:
-    - name: http
-      protocol: TCP
-      port: 80
-      targetPort: 5000
-  type: ClusterIP
+          env:
+            - name: SQS_QUEUE_URL
+              value: "https://sqs.us-west-2.amazonaws.com/014337110715/kind-cluster-sqs-queue"
