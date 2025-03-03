@@ -16,6 +16,15 @@ spec:
       initContainers:
         - name: init-mysql
           image: mysql:latest
+          env:
+            - name: MYSQL_HOST
+              value: "mysql-0.mysql.default.svc.cluster.local"
+            - name: MYSQL_USER
+              value: "root"
+            - name: MYSQL_PASSWORD
+              value: "rootpassword"
+            - name: MYSQL_DATABASE
+              value: "messages_db"
           command: ["/bin/sh", "-c", 
             until mysql -h $MYSQL_HOST -u $MYSQL_USER -p$MYSQL_PASSWORD -D $MYSQL_DATABASE -e 'SELECT 1'; do
               echo 'Waiting for MySQL...';
