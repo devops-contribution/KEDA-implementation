@@ -8,7 +8,7 @@ QUEUE_URL = os.getenv("SQS_QUEUE_URL")
 AWS_REGION = os.getenv("AWS_REGION", "us-west-2")
 
 # MySQL Database Configuration
-DB_HOST = os.getenv("MYSQL_HOST", "mysql.mysql.default.svc.cluster.local")
+DB_HOST = os.getenv("MYSQL_HOST", "mysql-0.mysql.default.svc.cluster.local")
 DB_PORT = int(os.getenv("MYSQL_PORT", 3306))
 DB_USER = os.getenv("MYSQL_USER", "root")
 DB_PASSWORD = os.getenv("MYSQL_PASSWORD", "rootpassword")
