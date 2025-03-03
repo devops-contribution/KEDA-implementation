@@ -24,7 +24,7 @@ def send_messages(messages):
         Entries=entries
     )
 
-    print("Messages sent successfully!")
+    # print("Messages sent successfully!")
     if "Successful" in response:
         for msg in response["Successful"]:
             print(f"MessageId: {msg['MessageId']} sent successfully.")
