@@ -3,19 +3,20 @@ apiVersion: v1
 kind: Service
 metadata:
   name: mysql
+  labels:
+    app: mysql
 spec:
   ports:
-    - port: 3306
+  - port: 3306
+    name: mysql
+  clusterIP: None
   selector:
     app: mysql
-  clusterIP: None
 ---
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
   name: mysql
-  labels:
-    app: mysql
 spec:
   serviceName: mysql
   replicas: 1
@@ -28,19 +29,22 @@ spec:
         app: mysql
     spec:
       containers:
-        - name: mysql
-          image: mysql:8.0
-          env:
-            - name: MYSQL_ROOT_PASSWORD
-              value: "rootpassword"
-            - name: MYSQL_DATABASE
-              value: "messages_db"
-          ports:
-            - containerPort: 3306
-          volumeMounts:
-            - name: data
-              mountPath: /var/lib/mysql
-      volumes:
-        - name: data
-          persistentVolumeClaim:
-            claimName: mysql-pvc
+      - name: mysql
+        image: mysql:8.0
+        env:
+        - name: MYSQL_ROOT_PASSWORD
+          value: "rootpassword"
+        ports:
+        - containerPort: 3306
+          name: mysql
+        volumeMounts:
+        - name: mysql-data
+          mountPath: /var/lib/mysql
+  volumeClaimTemplates:
+  - metadata:
+      name: mysql-data
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      resources:
+        requests:
+          storage: 10Gi
