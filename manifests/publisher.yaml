@@ -12,7 +12,7 @@ spec:
       restartPolicy: Never
       containers:
         - name: publisher
-          image: docker.io/muk007/publisher:13
+          image: docker.io/muk007/publisher:14
           env:
             - name: SQS_QUEUE_URL
               value: "https://sqs.us-west-2.amazonaws.com/014337110715/kind-cluster-sqs-queue"
