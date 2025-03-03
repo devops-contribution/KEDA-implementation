@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: consumer
-          image: docker.io/muk007/consumer:9
+          image: docker.io/muk007/consumer:11
           env:
             - name: SQS_QUEUE_URL
               value: "https://sqs.us-west-2.amazonaws.com/014337110715/kind-cluster-sqs-queue"
