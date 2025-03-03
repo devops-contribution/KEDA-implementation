@@ -40,22 +40,22 @@ jobs:
           terraform -chdir=terraform plan
           terraform -chdir=terraform apply -auto-approve
 
-      - name: Wait (Until startup script finishes)
-        run: sleep 300
+      # - name: Wait (Until startup script finishes)
+      #   run: sleep 300
 
-      - name: Apply Manifests
-        run: |
-          INSTANCE_ID=$(aws ec2 describe-instances --filters "Name=tag:Name,Values=kind-cluster" "Name=instance-state-name,Values=running" --query "Reservations[*].Instances[*].InstanceId" --output text)
-          aws ssm send-command \
-            --document-name "AWS-RunShellScript" \
-            --targets "Key=instanceIds,Values=$INSTANCE_ID" \
-            --parameters '{
-              "commands": [
-                "export KUBECONFIG=/home/ubuntu/.kube/config",
-                "cd /home/ubuntu",
-                "rm -rf KEDA-implementation", 
-                "git clone https://github.com/devops-contribution/KEDA-implementation.git",
-                "kubectl apply -f ./KEDA-implementation/manifests/."
-              ]
-            }' \
-            --comment "Apply Kubernetes manifests"
+      # - name: Apply Manifests
+      #   run: |
+      #     INSTANCE_ID=$(aws ec2 describe-instances --filters "Name=tag:Name,Values=kind-cluster" "Name=instance-state-name,Values=running" --query "Reservations[*].Instances[*].InstanceId" --output text)
+      #     aws ssm send-command \
+      #       --document-name "AWS-RunShellScript" \
+      #       --targets "Key=instanceIds,Values=$INSTANCE_ID" \
+      #       --parameters '{
+      #         "commands": [
+      #           "export KUBECONFIG=/home/ubuntu/.kube/config",
+      #           "cd /home/ubuntu",
+      #           "rm -rf KEDA-implementation", 
+      #           "git clone https://github.com/devops-contribution/KEDA-implementation.git",
+      #           "kubectl apply -f ./KEDA-implementation/manifests/."
+      #         ]
+      #       }' \
+      #       --comment "Apply Kubernetes manifests"
