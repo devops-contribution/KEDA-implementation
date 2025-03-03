@@ -1,0 +1,21 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: consumer
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: consumer
+  template:
+    metadata:
+      labels:
+        app: consumer
+    spec:
+      containers:
+        - name: consumer
+          image: docker.io/muk007/consumer
+          env:
+            - name: SQS_QUEUE_URL
+              value: "https://sqs.us-west-2.amazonaws.com/014337110715/kind-cluster-sqs-queue"
