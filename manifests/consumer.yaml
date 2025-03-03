@@ -13,6 +13,23 @@ spec:
       labels:
         app: consumer
     spec:
+      initContainers:
+        - name: init-mysql
+          image: mysql:latest
+          command: ["/bin/sh", "-c", 
+            until mysql -h $MYSQL_HOST -u $MYSQL_USER -p$MYSQL_PASSWORD -D $MYSQL_DATABASE -e 'SELECT 1'; do
+              echo 'Waiting for MySQL...';
+              sleep 5;
+            done;
+            mysql -h $MYSQL_HOST -u $MYSQL_USER -p$MYSQL_PASSWORD -D $MYSQL_DATABASE -e '
+              CREATE TABLE IF NOT EXISTS messages (
+                id INT AUTO_INCREMENT PRIMARY KEY,
+                event VARCHAR(255) NOT NULL,
+                user_id VARCHAR(255) NOT NULL,
+                timestamp DATETIME NOT NULL
+              );
+            ';
+          "]
       containers:
         - name: consumer
           image: docker.io/muk007/consumer:11
