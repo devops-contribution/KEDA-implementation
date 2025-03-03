@@ -15,7 +15,7 @@ spec:
     spec:
       initContainers:
         - name: init-mysql
-          image: mysql:latest
+          image: mysql:8.0
           env:
             - name: MYSQL_HOST
               value: "mysql-0.mysql.default.svc.cluster.local"
@@ -25,23 +25,27 @@ spec:
               value: "rootpassword"
             - name: MYSQL_DATABASE
               value: "messages_db"
-          command: ["/bin/sh", "-c", 
-            until mysql -h $MYSQL_HOST -u $MYSQL_USER -p$MYSQL_PASSWORD -D $MYSQL_DATABASE -e 'SELECT 1'; do
-              echo 'Waiting for MySQL...';
-              sleep 5;
-            done;
-            mysql -h $MYSQL_HOST -u $MYSQL_USER -p$MYSQL_PASSWORD -D $MYSQL_DATABASE -e '
+          command:
+            - "/bin/sh"
+            - "-c"
+            - |
+              until mysql -h $MYSQL_HOST -u $MYSQL_USER -p$MYSQL_PASSWORD -e "SELECT 1"; do
+                echo 'Waiting for MySQL...';
+                sleep 5;
+              done;
+              echo 'MySQL is up. Creating table if not exists...';
+              mysql -h $MYSQL_HOST -u $MYSQL_USER -p$MYSQL_PASSWORD -D $MYSQL_DATABASE -e "
               CREATE TABLE IF NOT EXISTS messages (
                 id INT AUTO_INCREMENT PRIMARY KEY,
                 event VARCHAR(255) NOT NULL,
                 user_id VARCHAR(255) NOT NULL,
                 timestamp DATETIME NOT NULL
               );
-            ';
-          "]
+              ";
       containers:
         - name: consumer
           image: docker.io/muk007/consumer:11
           env:
             - name: SQS_QUEUE_URL
               value: "https://sqs.us-west-2.amazonaws.com/014337110715/kind-cluster-sqs-queue"
+       
