@@ -35,9 +35,9 @@ def send_messages(messages):
 
 if __name__ == "__main__":
     messages = [
-        {"event": "user_signup", "user_id": 101, "timestamp": "2025-03-03T12:00:00Z"},
-        {"event": "order_placed", "order_id": 202, "amount": 150.5, "timestamp": "2025-03-03T12:05:00Z"},
-        {"event": "user_logout", "user_id": 303, "timestamp": "2025-03-03T12:10:00Z"}
+        {"event": "user_signup", "user_id": 101, "timestamp": "2025-03-03 12:00:00"},
+        {"event": "order_placed", "order_id": 202, "amount": 150.5, "timestamp": "2025-03-03 12:05:00"},
+        {"event": "user_logout", "user_id": 303, "timestamp": "2025-03-03 12:10:00"}
     ]
 
     send_messages(messages)
