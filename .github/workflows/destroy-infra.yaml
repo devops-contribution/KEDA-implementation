@@ -1,0 +1,39 @@
+name: Destroy Infra
+
+on:
+  workflow_dispatch:
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  destroy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: latest
+
+      #- name: Configure AWS creds
+      #  uses: aws-actions/configure-aws-credentials@v4
+      #  with:
+      #    role-to-assume: arn:aws:iam::014337110715:role/github-actions-role
+      #    aws-region: us-west-2
+
+      - name: Authenticate AWS
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-west-2
+
+      - name: Destroy Terraform Resources
+        run: |
+          terraform -chdir=terraform init
+          terraform -chdir=terraform destroy  -auto-approve
