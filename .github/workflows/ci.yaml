@@ -1,0 +1,53 @@
+name: Build and Deploy
+
+on:
+  workflow_dispatch:
+  
+  push:
+    branches: ["main"]
+    paths:
+      - "src/**"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    outputs:
+      image_tag: ${{ steps.set_tag.outputs.TAG }}
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5 
+ 
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Generate Tag Number
+        id: set_tag
+        run: |
+          VERSION="${{ github.run_number }}"
+          echo "TAG=$VERSION" >> $GITHUB_ENV
+          echo "TAG=$VERSION" >> $GITHUB_OUTPUT  # Save output
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Build Docker Image with Context (publisher)
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: devops/publisher.Dockerfile
+          push: true
+          tags: "${{ secrets.DOCKER_USERNAME }}/publisher:${{ env.TAG }}"
+
+      - name: Build Docker Image with Context (consumer)
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: devops/consumer.Dockerfile
+          push: true
+          tags: "${{ secrets.DOCKER_USERNAME }}/consumer:${{ env.TAG }}"
