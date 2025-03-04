@@ -1,0 +1,33 @@
+---
+apiVersion: keda.sh/v1alpha1
+kind: ScaledObject
+metadata:
+  name: consumer-scaledobject
+spec:
+  scaleTargetRef:
+    name: consumer
+  minReplicaCount: 1
+  maxReplicaCount: 10  # Scale up to 10 pods
+  pollingInterval: 10   # Check every 10s
+  cooldownPeriod: 30    # Scale down after 30s
+  triggers:
+    - type: aws-sqs-queue
+      metadata:
+        queueURL: "https://sqs.us-west-2.amazonaws.com/014337110715/kind-cluster-sqs-queue"
+        queueLength: "2"  # Scale when there are >2 messages in the queue
+        awsRegion: "us-west-2"
+      authenticationRef:
+        name: keda-aws-auth
+---
+apiVersion: keda.sh/v1alpha1
+kind: TriggerAuthentication
+metadata:
+  name: keda-aws-auth
+spec:
+  secretTargetRef:
+    - parameter: awsAccessKeyID
+      name: aws-sqs-credentials
+      key: AWS_ACCESS_KEY_ID
+    - parameter: awsSecretAccessKey
+      name: aws-sqs-credentials
+      key: AWS_SECRET_ACCESS_KEY

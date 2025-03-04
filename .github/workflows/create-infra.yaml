@@ -55,7 +55,10 @@ jobs:
                 "cd /home/ubuntu",
                 "rm -rf KEDA-implementation", 
                 "git clone https://github.com/devops-contribution/KEDA-implementation.git",
-                "kubectl apply -f ./KEDA-implementation/manifests/."
+                "kubectl apply -f ./KEDA-implementation/manifests/.",
+                "kubectl create secret generic aws-sqs-credentials \
+                 --from-literal=AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }} \
+                 --from-literal=AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }}"
               ]
             }' \
             --comment "Apply Kubernetes manifests"
