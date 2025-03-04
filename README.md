@@ -4,4 +4,4 @@ This project helps to understand the implementation of Kubernetes Event Driven A
 
 Below is the architectural diagram of this project.
 
- ![Screenshot](assets/architecture_1.png)
+ ![Screenshot](assets/architecture.png)
